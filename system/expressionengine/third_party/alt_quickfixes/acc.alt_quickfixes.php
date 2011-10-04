@@ -1,20 +1,6 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  
 /**
- * ExpressionEngine - by EllisLab
- *
- * @package		ExpressionEngine
- * @author		ExpressionEngine Dev Team
- * @copyright	Copyright (c) 2003 - 2011, EllisLab, Inc.
- * @license		http://expressionengine.com/user_guide/license.html
- * @link		http://expressionengine.com
- * @since		Version 2.0
- * @filesource
- */
- 
-// ------------------------------------------------------------------------
- 
-/**
  * Publish/Edit Quick Fixes Accessory
  *
  * @package		ExpressionEngine
@@ -32,18 +18,38 @@ class Alt_quickfixes_acc {
 	public $description		= 'Quick Fixes for Publish, Edit, & FileManager Screens';
 	public $sections		= array();
 	
-	/**
-	 * Set Sections
-	 */
-	public function set_sections() {
+	function __construct()
+	{
 		$this->EE =& get_instance();
 
+
+		//Only initialize if we are on a publish or edit page
+		if(			$this->EE->input->get('D') == "cp"
+				&& 	$this->EE->input->get('M') == "entry_form" 
+				&& ($this->EE->input->get('C') == "content_publish" || $this->EE->input->get('C') == "content_edit")
+			) {
+			$this->init();
+			}
+
+		//Hide the tab on all pages
+		$this->_hide_my_tab();
+
+	}
+	
+	public function init() {
 		$mystyles = $this->_get_styles();
 		$this->EE->cp->add_to_head($mystyles);
 		
 		$myscripts = $this->_get_scripts();
 		$this->EE->cp->add_to_foot($myscripts);
-		
+		} // end public function init()
+	
+	/**
+	 * Set Sections
+	 * This function must exist, but is empty
+	 */
+	public function set_sections() {
+
 		} // end public function set_sections()
 	
 	// ----------------------------------------------------------------
@@ -66,8 +72,6 @@ class Alt_quickfixes_acc {
 		<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery.datepicker.setDefaults( { changeMonth: true, changeYear: true } );
-					$("#alt_quickfixes.accessory").remove();
-					$("#accessoryTabs").find("a.alt_quickfixes").parent("li").remove();
 					});
 		</script>
 		
@@ -75,6 +79,10 @@ class Alt_quickfixes_acc {
 		
 		return $out;
 		} // end private function _get_scripts()
+		
+	private function _hide_my_tab() {
+		$this->EE->cp->load_package_js('hide_tab');
+		} // end private function _hide_my_tab()
 	
 }
  
