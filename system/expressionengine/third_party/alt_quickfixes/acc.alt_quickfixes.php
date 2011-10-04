@@ -35,24 +35,46 @@ class Alt_quickfixes_acc {
 	/**
 	 * Set Sections
 	 */
-	public function set_sections()
-	{
+	public function set_sections() {
 		$this->EE =& get_instance();
+
+		$mystyles = $this->_get_styles();
+		$this->EE->cp->add_to_head($mystyles);
 		
+		$myscripts = $this->_get_scripts();
+		$this->EE->cp->add_to_foot($myscripts);
 		
-		$this->EE->cp->add_to_foot('
-			<script type="text/javascript">
+		} // end public function set_sections()
+	
+	// ----------------------------------------------------------------
+	
+	private function _get_styles() {
+		$out = '
+		<style type="text/css">
+			div.publish_date fieldset.holder select { display: none !important; }
+		</style>
+		
+		';
+		
+		return $out;
+		} // end private function _get_styles()
+		
+	// ----------------------------------------------------------------	
+	
+	private function _get_scripts() {
+		$out = '
+		<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery.datepicker.setDefaults( { changeMonth: true, changeYear: true } );
 					$("#alt_quickfixes.accessory").remove();
 					$("#accessoryTabs").find("a.alt_quickfixes").parent("li").remove();
 					});
-			</script>
-			');
+		</script>
 		
-	}
-	
-	// ----------------------------------------------------------------
+		';
+		
+		return $out;
+		} // end private function _get_scripts()
 	
 }
  
