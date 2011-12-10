@@ -14,26 +14,31 @@
 class Alt_quickfixes_acc {
 	
 	public $name			= 'Publish/Edit Quick Fixes';
-	public $id			= 'alt_quickfixes';
-	public $version			= '1.1';
-	public $description		= 'Quick Fixes for Various CP Screens';
+	public $id				= 'alt_quickfixes';
+	public $version			= '1.2';
+	public $description		= 'Quick Fixes for Publish, Edit, & FileManager Screens';
 	public $sections		= array();
 	
 	function __construct()
 	{
 		$this->EE =& get_instance();
 
-        	$sec = 'other';
+        $sec = 'other';
         
-		//Only initialize if we are on a publish or edit page
-		if(	 $this->EE->input->get('D') == "cp"
-		&& 	 $this->EE->input->get('M') == "entry_form" 
-		&& 	($this->EE->input->get('C') == "content_publish" || $this->EE->input->get('C') == "content_edit")
+		//Set differently if we are on a publish or edit page
+		if(			$this->EE->input->get('D') == "cp"
+				&& 	$this->EE->input->get('M') == "entry_form" 
+				&& ($this->EE->input->get('C') == "content_publish" || $this->EE->input->get('C') == "content_edit")
 			) {
 			$sec = 'publish';
 			}
-       		
-       		$this->init($sec);
+		else if(	$this->EE->input->get('D') == "cp"
+				&& 	$this->EE->input->get('M') == "sync_directory" 
+				&&  $this->EE->input->get('C') == "content_files"
+				) {
+			$sec = 'filesync';
+			}
+        $this->init($sec);
         
 		//Hide the tab on all pages
 		$this->_hide_my_tab();
@@ -67,6 +72,9 @@ class Alt_quickfixes_acc {
             $out .= "html body .cke_skin_ee .cke_rcombo .cke_text { width: 180px !important; }\n";
             $out .= "html body .cke_skin_ee .cke_rcombopanel { width: 330px !important; }\n";
             }
+		else if('filesync' == $mysec) {
+			$out .= "a.backlink { font-size: 18px; color: #2D98DB !important; position: relative; top: -28px !important; margin-bottom: -22px !important; }";
+			}
         $out .= "</style>\n";
 		
 		return $out;
@@ -77,8 +85,8 @@ class Alt_quickfixes_acc {
 	private function _get_scripts($mysec) {
 		$out = '
 		<script type="text/javascript">
-            // This part fixes an issue with some pages not getting the corner() plugin loaded.
-            // If corner does not exist, we create a plugin which does nothing, but prevents an error.
+            /* This part fixes an issue with some pages not getting the corner() plugin loaded. **
+            ** If corner does not exist, we create a plugin which does nothing, but prevents an error. */
             if(!(jQuery().corner)) {
                 ;(function($) { 
                     $.fn.corner = function() {
@@ -89,8 +97,14 @@ class Alt_quickfixes_acc {
 				jQuery(document).ready(function() {
             ';
         if('publish' == $mysec) {
-                $out .= 'jQuery.datepicker.setDefaults( { changeMonth: true, changeYear: true } );';
-                }
+			$out .= 'jQuery.datepicker.setDefaults( { changeMonth: true, changeYear: true } );';
+			}
+		else if('filesync' == $mysec) {
+			$out .= '/* Auto-select image manipulations and submit form when visiting sync page */';
+			$out .= 'jQuery("input.toggle").prop("checked","checked");';
+			$out .= 'jQuery("#sync form input[type=\'submit\']").eq(0).click();';
+			$out .= 'jQuery(".rightNav:first").append("<a class=\'backlink\' href=\'javascript: history.go(-1)\'>&#0171; Back to Directory Listing</a>")';
+			}
                 
         $out .= '
                 });
