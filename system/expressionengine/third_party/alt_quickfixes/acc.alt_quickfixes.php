@@ -14,7 +14,7 @@
 class Alt_quickfixes_acc {
 	
 	public $name			= 'Publish/Edit Quick Fixes';
-	public $id				= 'alt_quickfixes';
+	public $id			= 'alt_quickfixes';
 	public $version			= '1.0';
 	public $description		= 'Quick Fixes for Publish, Edit, & FileManager Screens';
 	public $sections		= array();
@@ -41,8 +41,7 @@ class Alt_quickfixes_acc {
         $this->init($sec);
         
 		//Hide the tab on all pages
-		$this->sections[] = '<script type="text/javascript" charset="utf-8">$("#accessoryTabs a.alt_quickfixes").parent().remove();</script>';
-
+		$this->sections[] = '<script type="text/javascript" charset="utf-8">$("#accessoryTabs a.'.$this->id.'").parent().remove();</script>';
 	}
 	
 	public function init($sec) {
